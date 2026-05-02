@@ -67,10 +67,10 @@ class AppTextStyles {
         color: AppColors.primary,
       );
 
-  static TextStyle get logoText => GoogleFonts.poppins(
-        fontSize: 26,
+  static TextStyle get logoText => GoogleFonts.playfairDisplay(
+        fontSize: 28,
         fontWeight: FontWeight.w800,
         color: AppColors.primary,
-        letterSpacing: 2,
+        letterSpacing: 1.5,
       );
 }

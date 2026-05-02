@@ -148,31 +148,33 @@ class _SplashPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 100,
-              height: 100,
+              width: 120,
+              height: 120,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary, AppColors.primaryLight],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(24),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                    blurRadius: 30,
+                    offset: const Offset(0, 10),
                   ),
                 ],
               ),
-              child: const Icon(Icons.spa_rounded,
-                  color: Colors.white, size: 52),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => const Icon(
+                    Icons.spa_rounded,
+                    color: AppColors.primary,
+                    size: 60,
+                  ),
+                ),
+              ),
             ),
-            const SizedBox(height: 20),
-            Text('GLOWELLA', style: AppTextStyles.logoText),
-            const SizedBox(height: 8),
-            Text('by MD Scents', style: AppTextStyles.bodyMedium),
-            const SizedBox(height: 40),
+            const SizedBox(height: 32),
             const CircularProgressIndicator(
               color: AppColors.primary,
               strokeWidth: 2,

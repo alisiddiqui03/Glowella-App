@@ -42,31 +42,24 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
-        labelStyle: AppTextStyles.bodyMedium.copyWith(
-          color: AppColors.textSecondary,
-        ),
-        hintStyle: AppTextStyles.bodyMedium.copyWith(
-          color: AppColors.textMuted,
-        ),
-        prefixIconColor: AppColors.textSecondary,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        labelStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+        hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+        floatingLabelStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.primary),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.divider),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.divider),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.danger),
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        prefixIconColor: AppColors.textMuted,
+        suffixIconColor: AppColors.textMuted,
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,

@@ -81,12 +81,14 @@ class AuthController extends GetxController {
 
   String _friendlyError(String raw) {
     if (raw.contains('user-not-found')) return 'No account found with this email';
-    if (raw.contains('wrong-password')) return 'Incorrect password';
+    if (raw.contains('wrong-password') || raw.contains('invalid-credential')) return 'Incorrect email or password';
     if (raw.contains('invalid-email')) return 'Invalid email address';
     if (raw.contains('email-already-in-use')) return 'Email is already registered';
     if (raw.contains('weak-password')) return 'Password is too weak';
     if (raw.contains('network-request-failed')) return 'Network error. Check your connection';
+    if (raw.contains('too-many-requests')) return 'Too many attempts. Try again later';
+    if (raw.contains('invalid-app-check-token')) return 'App verification failed (Check SHA-1)';
     if (raw.contains('cancelled')) return 'Sign-in cancelled';
-    return 'Something went wrong. Please try again';
+    return 'Auth Error: ${raw.split(']').last}'; // Show raw message for debugging if not caught
   }
 }

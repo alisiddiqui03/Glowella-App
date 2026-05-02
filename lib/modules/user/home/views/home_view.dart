@@ -26,13 +26,14 @@ class HomeView extends GetView<HomeController> {
             slivers: [
               SliverToBoxAdapter(child: _buildHeader()),
               SliverToBoxAdapter(child: _buildWelcomeBanner()),
+              SliverToBoxAdapter(child: _buildNewArrivals()),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+                  padding: const EdgeInsets.fromLTRB(20, 32, 20, 12),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Our Products', style: AppTextStyles.titleLarge),
+                      Text('Explore Collection', style: AppTextStyles.titleLarge),
                       Text(
                         '${controller.products.length} items',
                         style: AppTextStyles.bodySmall,
@@ -88,14 +89,23 @@ class HomeView extends GetView<HomeController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('GLOWELLA', style: AppTextStyles.logoText),
-              Text('by MD Scents',
-                  style: AppTextStyles.bodySmall
-                      .copyWith(color: AppColors.textSecondary)),
-            ],
+          Image.asset(
+            'assets/images/logo.png',
+            height: 32,
+            errorBuilder: (_, __, ___) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('GLOWELLA',
+                    style: AppTextStyles.logoText.copyWith(fontSize: 18, letterSpacing: 2)),
+                Text('PREMIUM SKINCARE',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.5,
+                      color: AppColors.textSecondary,
+                    )),
+              ],
+            ),
           ),
           Row(
             children: [
@@ -117,6 +127,39 @@ class HomeView extends GetView<HomeController> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildNewArrivals() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('New Arrivals', style: AppTextStyles.titleLarge),
+              TextButton(
+                onPressed: () {},
+                child: Text('See All', style: AppTextStyles.bodySmall.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 190,
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            scrollDirection: Axis.horizontal,
+            itemCount: controller.featuredProducts.length,
+            itemBuilder: (context, index) {
+              final product = controller.featuredProducts[index];
+              return _ArrivalCard(product: product);
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -175,63 +218,58 @@ class HomeView extends GetView<HomeController> {
       margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.primary, AppColors.primaryLight],
+        color: AppColors.primary,
+        gradient: LinearGradient(
+          colors: [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.3),
-            blurRadius: 16,
+            color: AppColors.primary.withValues(alpha: 0.2),
+            blurRadius: 15,
             offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Your Glow Routine',
-                  style: AppTextStyles.titleMedium.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Discover skincare that works for your skin',
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.85),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                GestureDetector(
-                  onTap: () => Get.toNamed(Routes.ROUTINES),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      'View Routines →',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.white24,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              'SUMMER SALE',
+              style: AppTextStyles.bodySmall.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+                fontSize: 10,
+              ),
             ),
           ),
-          const Icon(Icons.spa_rounded, size: 64, color: Colors.white38),
+          const SizedBox(height: 12),
+          Text(
+            'Your Daily Glow\nStarts Here',
+            style: AppTextStyles.headlineMedium.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => Get.toNamed(Routes.ROUTINES),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: AppColors.primary,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            child: Text('Explore Routines', style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w800)),
+          ),
         ],
       ),
     );
@@ -269,14 +307,11 @@ class _ProductCard extends StatelessWidget {
                 child: Stack(
                   children: [
                     SizedBox.expand(
-                      child: product.imageUrl.isNotEmpty
-                          ? CachedNetworkImage(
-                              imageUrl: product.imageUrl,
+                      child: product.imageUrls.isNotEmpty
+                          ? Image.asset(
+                              product.imageUrls[0],
                               fit: BoxFit.cover,
-                              placeholder: (_, __) => Container(
-                                color: AppColors.shimmer,
-                              ),
-                              errorWidget: (_, __, ___) => Container(
+                              errorBuilder: (_, __, ___) => Container(
                                 color: AppColors.shimmer,
                                 child: const Icon(Icons.spa_rounded,
                                     color: AppColors.primaryLight, size: 40),
@@ -357,6 +392,87 @@ class _ProductCard extends StatelessWidget {
                         ),
                       ),
                     ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ArrivalCard extends StatelessWidget {
+  final GlowProduct product;
+  const _ArrivalCard({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Get.toNamed(Routes.PRODUCT_DETAIL, arguments: product),
+      child: Container(
+        width: 140,
+        margin: const EdgeInsets.only(right: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.shadow.withValues(alpha: 0.5),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                child: Container(
+                  width: double.infinity,
+                  color: AppColors.shimmer,
+                  child: product.imageUrls.isNotEmpty
+                      ? Image.asset(
+                          product.imageUrls[0],
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const Icon(Icons.spa_rounded,
+                              color: AppColors.primaryLight, size: 30),
+                        )
+                      : const Icon(Icons.spa_rounded,
+                          color: AppColors.primaryLight, size: 30),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.category.toUpperCase(),
+                    style: AppTextStyles.bodySmall.copyWith(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    product.name,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'PKR ',
+                    style: AppTextStyles.price.copyWith(fontSize: 11),
                   ),
                 ],
               ),
