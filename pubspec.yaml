@@ -1,0 +1,43 @@
+name: glowella
+description: "Glowella - Skincare by MD Scents"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  intl: ^0.19.0
+  get: ^4.7.2
+  get_storage: ^2.1.1
+  firebase_core: ^3.13.1
+  firebase_auth: ^5.5.3
+  cloud_firestore: ^5.6.6
+  firebase_storage: ^12.4.5
+  google_fonts: ^6.2.1
+  google_sign_in: ^6.2.2
+  google_mobile_ads: ^5.3.0
+  cached_network_image: ^3.4.1
+  image_picker: ^1.1.2
+  onesignal_flutter: ^5.3.0
+  http: ^1.2.2
+  fl_chart: ^0.70.2
+  url_launcher: ^6.3.1
+  flutter_dotenv: ^5.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - .env
