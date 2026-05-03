@@ -4,6 +4,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/routes/app_pages.dart';
 import '../../../../app/data/models/glow_order.dart';
+import '../../../../app/services/auth_service.dart';
 import '../controllers/profile_controller.dart';
 import 'package:intl/intl.dart';
 
@@ -21,14 +22,19 @@ class ProfileView extends GetView<ProfileController> {
           IconButton(
             icon: const Icon(Icons.logout_rounded, color: AppColors.textPrimary),
             onPressed: () => Get.dialog(AlertDialog(
-              title: const Text('Sign Out'),
-              content: const Text('Are you sure you want to sign out?'),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: const Text('Sign Out',
+                  style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+              content: const Text('Are you sure you want to sign out?',
+                  style: TextStyle(color: AppColors.textSecondary)),
               actions: [
-                TextButton(onPressed: Get.back, child: const Text('Cancel')),
+                TextButton(
+                    onPressed: Get.back,
+                    child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted))),
                 TextButton(
                   onPressed: controller.signOut,
                   child: const Text('Sign Out',
-                      style: TextStyle(color: AppColors.danger)),
+                      style: TextStyle(color: AppColors.danger, fontWeight: FontWeight.bold)),
                 ),
               ],
             )),
@@ -230,6 +236,9 @@ class ProfileView extends GetView<ProfileController> {
           const Divider(height: 1, color: AppColors.divider),
           _quickLink(Icons.percent_rounded, 'Discount & Ads',
               () => Get.toNamed(Routes.DISCOUNT)),
+          const Divider(height: 1, color: AppColors.divider),
+          _quickLink(Icons.location_on_outlined, 'Edit Saved Address',
+              () => _showAddressDialog()),
         ],
       ),
     );
@@ -299,6 +308,79 @@ class ProfileView extends GetView<ProfileController> {
             .map((o) => _OrderTile(order: o))
             ,
       ],
+    );
+  }
+
+  void _showAddressDialog() {
+    final user = Get.find<AuthService>().currentUser.value;
+    final phoneCtrl = TextEditingController(text: user?.phone ?? '');
+    final streetCtrl = TextEditingController(text: user?.street ?? '');
+    final cityCtrl = TextEditingController(text: user?.city ?? '');
+    final postalCtrl = TextEditingController(text: user?.postalCode ?? '');
+
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text('Edit Address', style: AppTextStyles.titleMedium),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _field(phoneCtrl, 'Phone Number'),
+              const SizedBox(height: 12),
+              _field(streetCtrl, 'Street Address'),
+              const SizedBox(height: 12),
+              _field(cityCtrl, 'City'),
+              const SizedBox(height: 12),
+              _field(postalCtrl, 'Postal Code'),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: Get.back,
+            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              controller.updateAddress(
+                phoneCtrl.text.trim(),
+                streetCtrl.text.trim(),
+                cityCtrl.text.trim(),
+                postalCtrl.text.trim(),
+              );
+              Get.back();
+              Get.snackbar(
+                'Success',
+                'Address updated successfully',
+                backgroundColor: AppColors.primary,
+                colorText: Colors.white,
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _field(TextEditingController ctrl, String label) {
+    return TextField(
+      controller: ctrl,
+      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: AppColors.textSecondary),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: AppColors.divider),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: AppColors.primary),
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
     );
   }
 }

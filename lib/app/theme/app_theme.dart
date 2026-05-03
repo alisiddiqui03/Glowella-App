@@ -24,8 +24,8 @@ class AppTheme {
         headlineLarge: AppTextStyles.headlineLarge,
         headlineMedium: AppTextStyles.headlineMedium,
         titleLarge: AppTextStyles.titleLarge,
-        bodyLarge: AppTextStyles.bodyLarge,
-        bodyMedium: AppTextStyles.bodyMedium,
+        bodyLarge: AppTextStyles.bodyLarge.copyWith(color: AppColors.textPrimary),
+        bodyMedium: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -43,9 +43,9 @@ class AppTheme {
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        labelStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+        labelStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
         hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
-        floatingLabelStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.primary),
+        floatingLabelStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
@@ -58,8 +58,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
-        prefixIconColor: AppColors.textMuted,
-        suffixIconColor: AppColors.textMuted,
+        prefixIconColor: AppColors.primary,
+        suffixIconColor: AppColors.primary,
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,

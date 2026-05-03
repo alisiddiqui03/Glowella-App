@@ -21,37 +21,12 @@ class AuthView extends GetView<AuthController> {
           child: Column(
             children: [
               const SizedBox(height: 48),
+
               // Logo
-              Container(
-                width: 88,
-                height: 88,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary, AppColors.primaryLight],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(22),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.35),
-                      blurRadius: 24,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: const Icon(Icons.spa_rounded, color: Colors.white, size: 48),
+              Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: Image.asset('assets/images/logo.png'),
               ),
-              const SizedBox(height: 16),
-              Text('GLOWELLA', style: AppTextStyles.logoText),
-              Text(
-                'by MD Scents',
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
-                  letterSpacing: 1,
-                ),
-              ),
-              const SizedBox(height: 40),
 
               // Card
               Container(
@@ -67,156 +42,178 @@ class AuthView extends GetView<AuthController> {
                   ],
                 ),
                 padding: const EdgeInsets.all(24),
-                child: Obx(() => Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Tab switcher
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.background,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.all(4),
-                      child: Row(
-                        children: [
-                          _tab('Sign In', controller.isLogin.value, () {
-                            controller.isLogin.value = true;
-                          }),
-                          _tab('Sign Up', !controller.isLogin.value, () {
-                            controller.isLogin.value = false;
-                          }),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    if (!controller.isLogin.value) ...[
-                      TextField(
-                        controller: nameCtrl,
-                        decoration: const InputDecoration(
-                          labelText: 'Full Name',
-                          prefixIcon: Icon(Icons.person_outline_rounded),
+                child: Obx(
+                  () => Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Tab switcher
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.background,
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        textCapitalization: TextCapitalization.words,
+                        padding: const EdgeInsets.all(4),
+                        child: Row(
+                          children: [
+                            _tab('Sign In', controller.isLogin.value, () {
+                              controller.isLogin.value = true;
+                            }),
+                            _tab('Sign Up', !controller.isLogin.value, () {
+                              controller.isLogin.value = false;
+                            }),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      if (!controller.isLogin.value) ...[
+                        TextField(
+                          controller: nameCtrl,
+                          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+                          decoration: const InputDecoration(
+                            labelText: 'Full Name',
+                            prefixIcon: Icon(Icons.person_outline_rounded),
+                          ),
+                          textCapitalization: TextCapitalization.words,
+                        ),
+                        const SizedBox(height: 14),
+                      ],
+
+                      TextField(
+                        controller: emailCtrl,
+                        style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          labelText: 'Email Address',
+                          prefixIcon: Icon(Icons.email_outlined),
+                        ),
                       ),
                       const SizedBox(height: 14),
-                    ],
 
-                    TextField(
-                      controller: emailCtrl,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: 'Email Address',
-                        prefixIcon: Icon(Icons.email_outlined),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-
-                    Obx(() => TextField(
-                      controller: passCtrl,
-                      obscureText: controller.obscurePassword.value,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock_outline_rounded),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            controller.obscurePassword.value
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                          ),
-                          onPressed: controller.toggleObscure,
-                        ),
-                      ),
-                    )),
-                    const SizedBox(height: 8),
-
-                    if (controller.errorMessage.value.isNotEmpty)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.danger.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          controller.errorMessage.value,
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.danger,
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 20),
-
-                    Obx(() => SizedBox(
-                      height: 52,
-                      child: ElevatedButton(
-                        onPressed: controller.isLoading.value
-                            ? null
-                            : () {
-                                if (controller.isLogin.value) {
-                                  controller.signIn(
-                                    emailCtrl.text,
-                                    passCtrl.text,
-                                  );
-                                } else {
-                                  controller.register(
-                                    nameCtrl.text,
-                                    emailCtrl.text,
-                                    passCtrl.text,
-                                  );
-                                }
-                              },
-                        child: controller.isLoading.value
-                            ? const SizedBox(
-                                width: 22, height: 22,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white, strokeWidth: 2,
-                                ),
-                              )
-                            : Text(
-                                controller.isLogin.value ? 'Sign In' : 'Create Account',
-                                style: AppTextStyles.buttonText,
+                      Obx(
+                        () => TextField(
+                          controller: passCtrl,
+                          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+                          obscureText: controller.obscurePassword.value,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            prefixIcon: const Icon(Icons.lock_outline_rounded),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                controller.obscurePassword.value
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
                               ),
+                              onPressed: controller.toggleObscure,
+                            ),
+                          ),
+                        ),
                       ),
-                    )),
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 8),
 
-                    Row(
-                      children: [
-                        const Expanded(child: Divider()),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Text('or', style: AppTextStyles.bodySmall),
+                      if (controller.errorMessage.value.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.danger.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            controller.errorMessage.value,
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.danger,
+                            ),
+                          ),
                         ),
-                        const Expanded(child: Divider()),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 20),
 
-                    Obx(() => OutlinedButton.icon(
-                      onPressed: controller.isLoading.value
-                          ? null
-                          : controller.signInWithGoogle,
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: AppColors.divider),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                      Obx(
+                        () => SizedBox(
+                          height: 52,
+                          child: ElevatedButton(
+                            onPressed:
+                                controller.isLoading.value
+                                    ? null
+                                    : () {
+                                      if (controller.isLogin.value) {
+                                        controller.signIn(
+                                          emailCtrl.text,
+                                          passCtrl.text,
+                                        );
+                                      } else {
+                                        controller.register(
+                                          nameCtrl.text,
+                                          emailCtrl.text,
+                                          passCtrl.text,
+                                        );
+                                      }
+                                    },
+                            child:
+                                controller.isLoading.value
+                                    ? const SizedBox(
+                                      width: 22,
+                                      height: 22,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                    : Text(
+                                      controller.isLogin.value
+                                          ? 'Sign In'
+                                          : 'Create Account',
+                                      style: AppTextStyles.buttonText,
+                                    ),
+                          ),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
-                      icon: const Icon(Icons.g_mobiledata_rounded,
-                          size: 28, color: Colors.red),
-                      label: Text(
-                        'Continue with Google',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                      const SizedBox(height: 16),
+
+                      Row(
+                        children: [
+                          const Expanded(child: Divider()),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text('or', style: AppTextStyles.bodySmall),
+                          ),
+                          const Expanded(child: Divider()),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      Obx(
+                        () => OutlinedButton.icon(
+                          onPressed:
+                              controller.isLoading.value
+                                  ? null
+                                  : controller.signInWithGoogle,
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: AppColors.divider),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          icon: const Icon(
+                            Icons.g_mobiledata_rounded,
+                            size: 28,
+                            color: Colors.red,
+                          ),
+                          label: Text(
+                            'Continue with Google',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
                         ),
                       ),
-                    )),
-                  ],
-                )),
+                    ],
+                  ),
+                ),
               ),
               const SizedBox(height: 40),
             ],

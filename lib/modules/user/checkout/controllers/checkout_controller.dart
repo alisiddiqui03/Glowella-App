@@ -33,18 +33,33 @@ class CheckoutController extends GetxController {
   final RxBool isLoading = false.obs;
   final Rxn<File> receiptFile = Rxn<File>();
 
+  final RxString city = ''.obs;
+
   double get subtotal => _cart.subtotal;
   double get discountAmt => subtotal * (_discount.currentDiscount / 100);
   double get bankBonus => isCod.value ? 0 : subtotal * 0.05;
+  
+  double get deliveryCharges {
+    if (!isCod.value) return 0.0; // Assuming Bank Transfer has free delivery or no COD fee
+    String cityLower = city.value.trim().toLowerCase();
+    if (cityLower == 'karachi') {
+      return 500.0;
+    } else if (cityLower.isNotEmpty) {
+      return 350.0;
+    }
+    return 0.0;
+  }
+
   double get afterDiscount => subtotal - discountAmt - bankBonus;
   double get walletDeduction {
     if (!useWallet.value) return 0;
     final available = _wallet.walletBalance.value;
-    return available > afterDiscount ? afterDiscount : available;
+    double totalWithDelivery = afterDiscount + deliveryCharges;
+    return available > totalWithDelivery ? totalWithDelivery : available;
   }
 
   double get finalTotal =>
-      (afterDiscount - walletDeduction).clamp(0.0, double.infinity);
+      (afterDiscount + deliveryCharges - walletDeduction).clamp(0.0, double.infinity);
 
   double get discountPct => _discount.currentDiscount;
 
@@ -56,7 +71,15 @@ class CheckoutController extends GetxController {
     if (user != null) {
       nameCtrl.text = user.displayName ?? '';
       emailCtrl.text = user.email ?? '';
+      phoneCtrl.text = user.phone ?? '';
+      streetCtrl.text = user.street ?? '';
+      cityCtrl.text = user.city ?? '';
+      postalCtrl.text = user.postalCode ?? '';
+      city.value = user.city ?? '';
     }
+    cityCtrl.addListener(() {
+      city.value = cityCtrl.text;
+    });
   }
 
   @override

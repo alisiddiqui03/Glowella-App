@@ -84,10 +84,7 @@ class AppPages {
       page: () => const RoutinesView(),
       binding: RoutinesBinding(),
     ),
-    GetPage(
-      name: _Paths.ROUTINE_DETAIL,
-      page: () => const RoutineDetailView(),
-    ),
+    GetPage(name: _Paths.ROUTINE_DETAIL, page: () => const RoutineDetailView()),
     GetPage(
       name: _Paths.DISCOUNT,
       page: () => const DiscountView(),
@@ -103,10 +100,7 @@ class AppPages {
       page: () => const OrdersView(),
       binding: OrdersBinding(),
     ),
-    GetPage(
-      name: _Paths.ORDER_CONFIRM,
-      page: () => const OrderConfirmView(),
-    ),
+    GetPage(name: _Paths.ORDER_CONFIRM, page: () => const OrderConfirmView()),
     // Admin
     GetPage(
       name: _Paths.ADMIN_BASE,
@@ -166,11 +160,12 @@ class _SplashPage extends StatelessWidget {
                 child: Image.asset(
                   'assets/images/logo.png',
                   fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => const Icon(
-                    Icons.spa_rounded,
-                    color: AppColors.primary,
-                    size: 60,
-                  ),
+                  errorBuilder:
+                      (_, __, ___) => const Icon(
+                        Icons.spa_rounded,
+                        color: AppColors.primary,
+                        size: 60,
+                      ),
                 ),
               ),
             ),

@@ -374,6 +374,11 @@ class CheckoutView extends GetView<CheckoutController> {
                   '- PKR ${controller.bankBonus.toStringAsFixed(0)}',
                   color: AppColors.primary,
                 ),
+              if (controller.isCod.value)
+                _summaryRow(
+                  'Delivery Charges',
+                  '+ PKR ${controller.deliveryCharges.toStringAsFixed(0)}',
+                ),
               if (controller.useWallet.value &&
                   controller.walletDeduction > 0)
                 _summaryRow(

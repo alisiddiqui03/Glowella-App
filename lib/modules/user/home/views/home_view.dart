@@ -26,33 +26,23 @@ class HomeView extends GetView<HomeController> {
             slivers: [
               SliverToBoxAdapter(child: _buildHeader()),
               SliverToBoxAdapter(child: _buildWelcomeBanner()),
-              SliverToBoxAdapter(child: _buildNewArrivals()),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 32, 20, 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Explore Collection', style: AppTextStyles.titleLarge),
-                      Text(
-                        '${controller.products.length} items',
-                        style: AppTextStyles.bodySmall,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
               if (controller.products.isEmpty)
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.all(40),
                     child: Column(
                       children: [
-                        const Icon(Icons.inventory_2_outlined,
-                            size: 64, color: AppColors.textMuted),
+                        const Icon(
+                          Icons.inventory_2_outlined,
+                          size: 64,
+                          color: AppColors.textMuted,
+                        ),
                         const SizedBox(height: 12),
-                        Text('No products yet',
-                            style: AppTextStyles.bodyMedium),
+                        Text(
+                          'No products yet',
+                          style: AppTextStyles.bodyMedium,
+                        ),
                       ],
                     ),
                   ),
@@ -62,17 +52,16 @@ class HomeView extends GetView<HomeController> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   sliver: SliverGrid(
                     delegate: SliverChildBuilderDelegate(
-                      (ctx, i) =>
-                          _ProductCard(product: controller.products[i]),
+                      (ctx, i) => _ProductCard(product: controller.products[i]),
                       childCount: controller.products.length,
                     ),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.72,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                    ),
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.58,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
                   ),
                 ),
               const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -92,20 +81,28 @@ class HomeView extends GetView<HomeController> {
           Image.asset(
             'assets/images/logo.png',
             height: 32,
-            errorBuilder: (_, __, ___) => Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('GLOWELLA',
-                    style: AppTextStyles.logoText.copyWith(fontSize: 18, letterSpacing: 2)),
-                Text('PREMIUM SKINCARE',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.5,
-                      color: AppColors.textSecondary,
-                    )),
-              ],
-            ),
+            errorBuilder:
+                (_, __, ___) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'GLOWELLA',
+                      style: AppTextStyles.logoText.copyWith(
+                        fontSize: 18,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                    Text(
+                      'PREMIUM SKINCARE',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.5,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
           ),
           Row(
             children: [
@@ -130,43 +127,12 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildNewArrivals() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('New Arrivals', style: AppTextStyles.titleLarge),
-              TextButton(
-                onPressed: () {},
-                child: Text('See All', style: AppTextStyles.bodySmall.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 190,
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            scrollDirection: Axis.horizontal,
-            itemCount: controller.featuredProducts.length,
-            itemBuilder: (context, index) {
-              final product = controller.featuredProducts[index];
-              return _ArrivalCard(product: product);
-            },
-          ),
-        ),
-      ],
-    );
-  }
 
-  Widget _iconBtn(
-      {required IconData icon,
-      required VoidCallback onTap,
-      String? badge}) {
+  Widget _iconBtn({
+    required IconData icon,
+    required VoidCallback onTap,
+    String? badge,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -266,9 +232,16 @@ class HomeView extends GetView<HomeController> {
               backgroundColor: Colors.white,
               foregroundColor: AppColors.primary,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
-            child: Text('Explore Routines', style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w800)),
+            child: Text(
+              'Explore Routines',
+              style: AppTextStyles.bodySmall.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
           ),
         ],
       ),
@@ -287,23 +260,22 @@ class _ProductCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: AppColors.shadow,
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: AppColors.shadow.withValues(alpha: 0.4),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
             ),
           ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Image
+            // Image Area
             Expanded(
               child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(18)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                 child: Stack(
                   children: [
                     SizedBox.expand(
@@ -323,25 +295,22 @@ class _ProductCard extends StatelessWidget {
                                   color: AppColors.primaryLight, size: 40),
                             ),
                     ),
-                    // Out of stock badge
                     if (product.stock <= 0)
                       Positioned(
-                        top: 8,
-                        right: 8,
+                        top: 10,
+                        right: 10,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
-                            color: AppColors.danger,
-                            borderRadius: BorderRadius.circular(8),
+                            color: AppColors.danger.withValues(alpha: 0.9),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Text(
-                            'Out of Stock',
+                            'Sold Out',
                             style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 9,
-                              fontWeight: FontWeight.w600,
-                            ),
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
@@ -349,103 +318,7 @@ class _ProductCard extends StatelessWidget {
                 ),
               ),
             ),
-            // Info
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.name,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'PKR ${product.price.toStringAsFixed(0)}',
-                        style: AppTextStyles.price,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          if (product.stock > 0) {
-                            Get.find<CartController>().addToCart(product);
-                          }
-                        },
-                        child: Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: product.stock > 0
-                                ? AppColors.primary
-                                : AppColors.divider,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(Icons.add,
-                              color: Colors.white, size: 18),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ArrivalCard extends StatelessWidget {
-  final GlowProduct product;
-  const _ArrivalCard({required this.product});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Get.toNamed(Routes.PRODUCT_DETAIL, arguments: product),
-      child: Container(
-        width: 140,
-        margin: const EdgeInsets.only(right: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadow.withValues(alpha: 0.5),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                child: Container(
-                  width: double.infinity,
-                  color: AppColors.shimmer,
-                  child: product.imageUrls.isNotEmpty
-                      ? Image.asset(
-                          product.imageUrls[0],
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(Icons.spa_rounded,
-                              color: AppColors.primaryLight, size: 30),
-                        )
-                      : const Icon(Icons.spa_rounded,
-                          color: AppColors.primaryLight, size: 30),
-                ),
-              ),
-            ),
+            // Details Area
             Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
@@ -454,25 +327,63 @@ class _ArrivalCard extends StatelessWidget {
                   Text(
                     product.category.toUpperCase(),
                     style: AppTextStyles.bodySmall.copyWith(
-                      fontSize: 8,
+                      fontSize: 9,
                       fontWeight: FontWeight.w800,
                       color: AppColors.primary,
+                      letterSpacing: 0.5,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     product.name,
-                    style: AppTextStyles.bodySmall.copyWith(
+                    style: AppTextStyles.bodyMedium.copyWith(
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
                     ),
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
                   Text(
-                    'PKR ',
-                    style: AppTextStyles.price.copyWith(fontSize: 11),
+                    'PKR ${product.price.toStringAsFixed(0)}',
+                    style: AppTextStyles.price.copyWith(fontSize: 14),
+                  ),
+                  const SizedBox(height: 12),
+                  // Add to Cart Button
+                  SizedBox(
+                    height: 36,
+                    child: ElevatedButton(
+                      onPressed: product.stock > 0
+                          ? () {
+                              Get.find<CartController>().addToCart(product);
+                              Get.snackbar(
+                                'Added to Cart',
+                                '${product.name} added successfully',
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: AppColors.primary,
+                                colorText: Colors.white,
+                                duration: const Duration(seconds: 2),
+                                margin: const EdgeInsets.all(12),
+                              );
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Text(
+                        'Add to Cart',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

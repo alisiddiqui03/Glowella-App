@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "206439401804-pnu17h9i8ub1m2girordisccobed2pe9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.glowella.app",
+            "certificate_hash": "d046c556119bb7ea53cf349cc44c1e2431e628f1"
+          }
+        },
+        {
           "client_id": "206439401804-8385v6h910puk3p2j8rp7vj80m7fr994.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -124,38 +124,47 @@ class AuthService extends GetxService {
 
   Future<UserCredential> signInWithGoogle() async {
     try {
-      await _googleSignInClient.signOut();
-    } catch (_) {}
-    try {
-      await _googleSignInClient.disconnect();
-    } catch (_) {}
+      try {
+        await _googleSignInClient.signOut();
+      } catch (_) {}
+      try {
+        await _googleSignInClient.disconnect();
+      } catch (_) {}
 
-    final GoogleSignInAccount? googleUser = await _googleSignInClient.signIn();
-    if (googleUser == null) {
-      throw FirebaseAuthException(
-        code: 'google-sign-in-aborted',
-        message: 'Google sign-in was cancelled by the user.',
+      final GoogleSignInAccount? googleUser = await _googleSignInClient.signIn();
+      if (googleUser == null) {
+        throw FirebaseAuthException(
+          code: 'google-sign-in-aborted',
+          message: 'Google sign-in was cancelled by the user.',
+        );
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      if (googleAuth.idToken == null || googleAuth.idToken!.isEmpty) {
+        throw FirebaseAuthException(
+          code: 'invalid-credential',
+          message: 'Google did not return an ID token.',
+        );
+      }
+
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
+
+      final result = await _auth.signInWithCredential(credential);
+      await _loadUserProfile(result.user!);
+      return result;
+    } catch (e) {
+      if (e.toString().contains('10')) {
+        throw 'Google Config Error: Check SHA-1 & Support Email in Firebase Console.';
+      } else if (e.toString().contains('12500')) {
+        throw 'Google Sign-In failed (12500): Check your project configuration.';
+      }
+      rethrow;
     }
-
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    if (googleAuth.idToken == null || googleAuth.idToken!.isEmpty) {
-      throw FirebaseAuthException(
-        code: 'invalid-credential',
-        message: 'Google did not return an ID token.',
-      );
-    }
-
-    final OAuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    final result = await _auth.signInWithCredential(credential);
-    await _loadUserProfile(result.user!);
-    return result;
   }
 
   Future<void> sendPasswordResetEmail(String email) async {

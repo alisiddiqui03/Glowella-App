@@ -5,14 +5,19 @@ Glowella is a high-end skincare application built for **MD Scents**, designed to
 ## 🌟 Key Features
 
 ### 🛍️ Shopping Experience
-- **Home Dashboard**: Features a high-visibility "New Arrivals" slider and categorized collections.
-- **Product Details**: Premium image sliders, detailed ingredient lists, and benefit callouts (e.g., Dermatologically Tested, Cruelty-Free).
-- **Cart Management**: Real-time cart updates with automatic discount calculations.
+- **Home Dashboard**: Clean, direct layout showing all predefined premium products right under the promotional banner. No horizontal scrolling, ensuring all products are instantly visible.
+- **Product Details**: Premium image sliders (left-to-right), detailed descriptions, pricing, and an accessible "Add to Cart" sticky footer.
+- **Cart Management**: Real-time cart updates with total calculations, leading smoothly to the checkout pipeline.
 
 ### 💳 Checkout & Loyalty
-- **Flexible Payments**: Supports Cash on Delivery (COD) and Bank Transfer with a dedicated bonus structure.
-- **Loyalty Program**: Users earn points on every purchase, which can be redeemed for discounts.
-- **Wallet System**: Integrated wallet for storing and applying rewards balance during checkout.
+- **Flexible Payments**: 
+  - **Bank Transfer**: Users receive an automatic **5% discount** for selecting Bank Transfer.
+  - **Cash on Delivery (COD)**: 
+    - **Karachi**: PKR 500 delivery charge.
+    - **Outside Karachi**: PKR 350 delivery charge.
+- **Loyalty Program**: Users earn points on every purchase, which can be redeemed for discounts during checkout.
+- **Wallet System**: Integrated wallet for storing and applying rewards balance.
+- **Address Management**: Users can save and edit their delivery address (Phone, Street, City, Postal Code) directly from their Profile, which auto-fills during checkout.
 
 ### 🧴 Featured Inventory
 1. **Barrier Support Serum** (30ml) - Niacinamide + Zinc.
@@ -28,18 +33,19 @@ Glowella is a high-end skincare application built for **MD Scents**, designed to
 ### Core Stack
 - **Framework**: Flutter with GetX for state management and routing.
 - **Backend**: Firebase (Auth, Firestore, Storage).
-- **Styling**: Vanilla CSS-like theme implementation with `Playfair Display` for branding.
+- **Styling**: Vanilla CSS-like theme implementation.
 
 ### UI/UX Standards
-- **Accessibility**: Strict "No White Text" policy for input fields on light backgrounds to ensure 100% readability.
-- **Performance**: Optimized image loading using `CachedNetworkImage` and asset-based caching.
+- **Premium eCommerce Feel**: Products are displayed in high-quality containers with shadow effects, out-of-stock badges, and full-width interactive buttons.
+- **Accessibility**: Strict "Dark Text" policy for input fields on light backgrounds to ensure 100% readability.
+- **Performance**: Optimized image loading using asset-based caching.
 
 ## 🚀 App Flows
 
 1. **Authentication**: Role-based access (User/Admin) via Firebase Auth.
-2. **Discovery**: Home -> Featured Products -> Product Detail -> Cart.
-3. **Purchase**: Cart -> Checkout (Delivery Details -> Payment Method -> Order Summary) -> Order Confirmation.
-4. **Management**: Profile -> Order History -> Loyalty Status.
+2. **Discovery**: Home Dashboard (Banner -> Products Grid) -> Product Detail (Image Slider -> Add to Cart).
+3. **Checkout Pipeline**: Cart -> Checkout (Auto-filled Delivery Details -> Payment Method selection -> Real-time Summary with Delivery/Discounts applied) -> Order Confirmation.
+4. **Profile Management**: Profile -> Saved Address editing -> Order History -> Wallet Status.
 
 ---
 *Developed by Antigravity AI for MD Scents.*

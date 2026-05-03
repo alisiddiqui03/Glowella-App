@@ -8,6 +8,10 @@ class AppUser {
   final int points;
   final bool isVip;
   final DateTime? vipEndDate;
+  final String? phone;
+  final String? street;
+  final String? city;
+  final String? postalCode;
 
   const AppUser({
     required this.uid,
@@ -17,6 +21,10 @@ class AppUser {
     this.points = 0,
     this.isVip = false,
     this.vipEndDate,
+    this.phone,
+    this.street,
+    this.city,
+    this.postalCode,
   });
 
   bool get isAdmin => role == 'admin';
@@ -35,6 +43,10 @@ class AppUser {
       points: (map['points'] as num?)?.toInt() ?? 0,
       isVip: map['isVip'] as bool? ?? false,
       vipEndDate: (map['vipEndDate'] as Timestamp?)?.toDate(),
+      phone: map['phone'] as String?,
+      street: map['street'] as String?,
+      city: map['city'] as String?,
+      postalCode: map['postalCode'] as String?,
     );
   }
 
@@ -46,6 +58,10 @@ class AppUser {
       'points': points,
       'isVip': isVip,
       'vipEndDate': vipEndDate != null ? Timestamp.fromDate(vipEndDate!) : null,
+      'phone': phone,
+      'street': street,
+      'city': city,
+      'postalCode': postalCode,
     };
   }
 }

@@ -3,6 +3,7 @@ import '../../../../app/services/auth_service.dart';
 import '../../../../app/services/wallet_service.dart';
 import '../../../../app/services/order_service.dart';
 import '../../../../app/data/models/glow_order.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileController extends GetxController {
   static ProfileController get to => Get.find<ProfileController>();
@@ -37,6 +38,24 @@ class ProfileController extends GetxController {
     } catch (_) {
     } finally {
       ordersLoading.value = false;
+    }
+  }
+
+  Future<void> updateAddress(String phone, String street, String city, String postal) async {
+    final user = _auth.currentUser.value;
+    if (user == null) return;
+    
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+        'phone': phone,
+        'street': street,
+        'city': city,
+        'postalCode': postal,
+      });
+      // Refresh user profile
+      await _auth.refreshProfile();
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to update address');
     }
   }
 
