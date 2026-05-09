@@ -36,12 +36,17 @@ class DiscountService extends GetxService {
     _discountSub = FirestoreService.usersCollection
         .doc(uid)
         .snapshots()
-        .listen((snap) {
-      if (!snap.exists) return;
-      final d = snap.data() ?? {};
-      adDiscount.value = (d['glowAdDiscount'] as num?)?.toDouble() ?? 5.0;
-      adProgressCount.value = (d['glowAdProgressCount'] as num?)?.toInt() ?? 0;
-    });
+        .listen(
+      (snap) {
+        if (!snap.exists) return;
+        final d = snap.data() ?? {};
+        adDiscount.value = (d['glowAdDiscount'] as num?)?.toDouble() ?? 5.0;
+        adProgressCount.value = (d['glowAdProgressCount'] as num?)?.toInt() ?? 0;
+      },
+      onError: (e) {
+        // Ignore permission denied errors during logout
+      },
+    );
   }
 
   Future<void> _fetchAdminAdControl() async {

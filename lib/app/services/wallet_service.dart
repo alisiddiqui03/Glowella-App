@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:get/get.dart';
 
 import 'auth_service.dart';
@@ -10,6 +11,8 @@ class WalletService extends GetxService {
 
   final RxDouble walletBalance = 0.0.obs;
 
+  StreamSubscription? _walletSub;
+
   @override
   void onInit() {
     super.onInit();
@@ -17,24 +20,38 @@ class WalletService extends GetxService {
     _bindStream();
   }
 
+  @override
+  void onClose() {
+    _walletSub?.cancel();
+    super.onClose();
+  }
+
   void _bindStream() {
+    _walletSub?.cancel();
+    
     final uid = AuthService.to.currentUser.value?.uid;
     if (uid == null) {
       walletBalance.value = 0;
       return;
     }
-    FirestoreService.usersCollection.doc(uid).snapshots().listen((snap) {
-      if (!snap.exists) return;
-      final data = snap.data() ?? {};
-      // Support both wallet.balance and walletBalance fields
-      final w = data['wallet'];
-      if (w is Map) {
-        walletBalance.value = (w['balance'] as num?)?.toDouble() ?? 0;
-      } else {
-        walletBalance.value =
-            (data['walletBalance'] as num?)?.toDouble() ?? 0;
-      }
-    });
+    
+    _walletSub = FirestoreService.usersCollection.doc(uid).snapshots().listen(
+      (snap) {
+        if (!snap.exists) return;
+        final data = snap.data() ?? {};
+        // Support both wallet.balance and walletBalance fields
+        final w = data['wallet'];
+        if (w is Map) {
+          walletBalance.value = (w['balance'] as num?)?.toDouble() ?? 0;
+        } else {
+          walletBalance.value =
+              (data['walletBalance'] as num?)?.toDouble() ?? 0;
+        }
+      },
+      onError: (e) {
+        // Ignore permission denied errors that might happen during logout transition
+      },
+    );
   }
 
   Future<void> deductWallet(String uid, double amount) async {

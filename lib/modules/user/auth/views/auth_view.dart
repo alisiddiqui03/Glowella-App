@@ -70,9 +70,18 @@ class AuthView extends GetView<AuthController> {
                         TextField(
                           controller: nameCtrl,
                           style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Full Name',
-                            prefixIcon: Icon(Icons.person_outline_rounded),
+                            prefixIcon: const Icon(Icons.person_outline_rounded),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: AppColors.divider, width: 1.5),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                           textCapitalization: TextCapitalization.words,
                         ),
@@ -83,9 +92,18 @@ class AuthView extends GetView<AuthController> {
                         controller: emailCtrl,
                         style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
                         keyboardType: TextInputType.emailAddress,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Email Address',
-                          prefixIcon: Icon(Icons.email_outlined),
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(color: AppColors.divider, width: 1.5),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 14),
@@ -98,6 +116,15 @@ class AuthView extends GetView<AuthController> {
                           decoration: InputDecoration(
                             labelText: 'Password',
                             prefixIcon: const Icon(Icons.lock_outline_rounded),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: AppColors.divider, width: 1.5),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 controller.obscurePassword.value
@@ -109,25 +136,37 @@ class AuthView extends GetView<AuthController> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
-
-                      if (controller.errorMessage.value.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.danger.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            controller.errorMessage.value,
-                            style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.danger,
+                      
+                      Obx(() => controller.isLogin.value 
+                        ? Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () => _showForgotPasswordBottomSheet(emailCtrl.text),
+                              child: Text('Forgot Password?', style: AppTextStyles.bodySmall.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
                             ),
-                          ),
-                        ),
+                          )
+                        : const SizedBox(height: 16)
+                      ),
+
+                      Obx(() => controller.errorMessage.value.isNotEmpty
+                        ? Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.danger.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              controller.errorMessage.value,
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.danger,
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink()
+                      ),
                       const SizedBox(height: 20),
 
                       Obx(
@@ -244,6 +283,55 @@ class AuthView extends GetView<AuthController> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showForgotPasswordBottomSheet(String prefilledEmail) {
+    final resetEmailCtrl = TextEditingController(text: prefilledEmail);
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text('Reset Password', style: AppTextStyles.titleMedium),
+            const SizedBox(height: 8),
+            Text('Enter your email address to receive a password reset link.', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
+            const SizedBox(height: 24),
+            TextField(
+              controller: resetEmailCtrl,
+              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                labelText: 'Email Address',
+                prefixIcon: const Icon(Icons.email_outlined),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: AppColors.divider, width: 1.5), borderRadius: BorderRadius.circular(12)),
+                focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: AppColors.primary, width: 2), borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Obx(() => ElevatedButton(
+              onPressed: controller.isLoading.value ? null : () => controller.resetPassword(resetEmailCtrl.text),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: AppColors.primary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+              child: controller.isLoading.value 
+                ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                : Text('Send Reset Link', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+            )),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
     );
   }
 }

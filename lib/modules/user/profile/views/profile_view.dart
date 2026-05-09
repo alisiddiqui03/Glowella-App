@@ -7,6 +7,7 @@ import '../../../../app/data/models/glow_order.dart';
 import '../../../../app/services/auth_service.dart';
 import '../controllers/profile_controller.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});
@@ -239,30 +240,140 @@ class ProfileView extends GetView<ProfileController> {
           const Divider(height: 1, color: AppColors.divider),
           _quickLink(Icons.location_on_outlined, 'Edit Saved Address',
               () => _showAddressDialog()),
+          const Divider(height: 1, color: AppColors.divider),
+          _quickLink(Icons.help_outline_rounded, 'Help & Support', () {
+            _showInfoDialog(
+              title: '❔ Help & Support (FAQs)',
+              content: 'Orders & Payments\n\n'
+                  'What payment methods do you accept?\n'
+                  'We offer Cash on Delivery (COD) and Bank Transfer. For orders exceeding PKR 10,000, we highly recommend Bank Transfer.\n\n'
+                  'How do I pay via Bank Transfer?\n'
+                  'At checkout, select "Bank Transfer" and you will get an automatic 5% discount. You will be provided with our account details. Once you have transferred the amount, simply upload a screenshot of your payment receipt directly in the app to verify your order.\n\n'
+                  'How much is delivery?\n'
+                  'For COD, delivery is PKR 500 within Karachi, and PKR 350 outside Karachi. Bank Transfer orders enjoy a flat 5% discount.\n\n'
+                  'Discounts & Rewards\n\n'
+                  'How does the discount feature work?\n'
+                  'All users can earn points on their purchases and watch short video ads in the "Discount & Ads" section to boost their discount percentage up to 20%.\n\n'
+                  'General Support\n\n'
+                  'How can I contact customer service?\n'
+                  'You can reach out to us on our official Instagram/Facebook or email us at umair.1917@gmail.com.\n\n'
+                  'What is Glowella?\n'
+                  'Glowella is a premium skincare brand by MD Scents, specializing in top-tier dermatologically tested products.',
+            );
+          }),
+          const Divider(height: 1, color: AppColors.divider),
+          _quickLink(Icons.privacy_tip_outlined, 'Privacy Policy', () {
+            _showInfoDialog(
+              title: '🛡️ Privacy Policy',
+              content: 'Effective Date: 11 April 2026\n\n'
+                  'Glowella (by MD Scents) values your privacy and is committed to protecting your personal data.\n\n'
+                  '1. Information We Collect\n'
+                  'Account Information: Name, email address, and contact details via Google or email login.\n'
+                  'Transaction Data: Delivery address, billing details, and payment proof screenshots. We do NOT collect or store your credit/debit card details.\n'
+                  'App Activity: Order history and wallet data.\n\n'
+                  '2. How We Use Your Information\n'
+                  'To process and deliver your orders, manage your account, and provide customer support.\n\n'
+                  '3. Third-Party Services\n'
+                  'We use Firebase (by Google) for authentication and database management. We may use AdMob to display ads. We do not share your personal identifiable information with advertisers.\n\n'
+                  '4. Data Deletion\n'
+                  'You may request the complete deletion of your account and data at any time via the "Delete Account" button in your profile.\n\n'
+                  '5. Contact Us\n'
+                  'For any privacy concerns, email: umair.1917@gmail.com',
+            );
+          }),
+          const Divider(height: 1, color: AppColors.divider),
+          _quickLink(Icons.info_outline_rounded, 'About Glowella', () {
+            Get.dialog(AlertDialog(
+              title: const Text('About Glowella', style: TextStyle(color: AppColors.textPrimary)),
+              content: const Text('Glowella is a premium skincare application by MD Scents, bringing you top-tier skincare products right to your doorstep.', style: TextStyle(color: AppColors.textSecondary)),
+              actions: [TextButton(onPressed: Get.back, child: const Text('Close'))],
+            ));
+          }),
+          const Divider(height: 1, color: AppColors.divider),
+          _quickLink(Icons.explore_outlined, 'Discover MD Scents', () async {
+            final url = Uri.parse('https://play.google.com/store/apps/details?id=com.mdscents.perfumes');
+            if (await canLaunchUrl(url)) {
+              await launchUrl(url, mode: LaunchMode.externalApplication);
+            }
+          }),
+          const Divider(height: 1, color: AppColors.divider),
+          _quickLink(
+            Icons.delete_forever_rounded,
+            'Delete Account',
+            () => _showDeleteAccountDialog(),
+            textColor: AppColors.danger,
+            iconColor: AppColors.danger,
+          ),
         ],
       ),
     );
   }
 
-  Widget _quickLink(IconData icon, String label, VoidCallback onTap) {
+  void _showInfoDialog({required String title, required String content}) {
+    Get.dialog(AlertDialog(
+      backgroundColor: Colors.white,
+      title: Text(title, style: AppTextStyles.titleMedium),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: SingleChildScrollView(
+          child: Text(
+            content,
+            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary, height: 1.5),
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: Get.back,
+          child: const Text('Close', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+        ),
+      ],
+    ));
+  }
+
+  void _showDeleteAccountDialog() {
+    Get.dialog(AlertDialog(
+      title: const Text('Delete Account', style: TextStyle(color: AppColors.danger, fontWeight: FontWeight.bold)),
+      content: const Text('Are you sure you want to permanently delete your account? This action cannot be undone and all your points and history will be lost.', style: TextStyle(color: AppColors.textSecondary)),
+      actions: [
+        TextButton(
+          onPressed: Get.back,
+          child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Get.back();
+            controller.deleteAccount();
+          },
+          style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger, foregroundColor: Colors.white),
+          child: const Text('Delete Forever'),
+        ),
+      ],
+    ));
+  }
+
+  Widget _quickLink(IconData icon, String label, VoidCallback onTap,
+      {Color? textColor, Color? iconColor}) {
     return ListTile(
       leading: Container(
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.1),
+          color: (iconColor ?? AppColors.primary).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, color: AppColors.primary, size: 20),
+        child: Icon(icon, color: iconColor ?? AppColors.primary, size: 20),
       ),
       title: Text(label,
-          style: AppTextStyles.bodyMedium
-              .copyWith(fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+          style: AppTextStyles.bodyMedium.copyWith(
+              fontWeight: FontWeight.w600,
+              color: textColor ?? AppColors.textPrimary)),
       trailing: const Icon(Icons.chevron_right_rounded,
           color: AppColors.textMuted),
       onTap: onTap,
     );
   }
+
 
   Widget _buildRecentOrders() {
     if (controller.ordersLoading.value) {

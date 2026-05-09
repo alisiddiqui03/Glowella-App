@@ -177,4 +177,28 @@ class AuthService extends GetxService {
     currentUser.value = null;
     firebaseUser.value = null;
   }
+
+  Future<void> deleteAccount() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+
+    try {
+      // First delete user data from Firestore
+      await _firestore.collection('users').doc(user.uid).delete();
+      
+      // Then delete the Firebase Auth user
+      await user.delete();
+      
+      // Clear state
+      currentUser.value = null;
+      firebaseUser.value = null;
+      try { await _googleSignIn?.signOut(); } catch (_) {}
+      
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        throw 'Please sign out and sign in again to delete your account for security reasons.';
+      }
+      rethrow;
+    }
+  }
 }

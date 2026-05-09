@@ -63,4 +63,16 @@ class ProfileController extends GetxController {
     await _auth.signOut();
     Get.offAllNamed('/auth');
   }
+
+  Future<void> deleteAccount() async {
+    try {
+      await _auth.deleteAccount();
+      Get.offAllNamed('/auth');
+      Get.snackbar('Success', 'Your account has been deleted.',
+          snackPosition: SnackPosition.BOTTOM);
+    } catch (e) {
+      Get.snackbar('Notice', e.toString(),
+          snackPosition: SnackPosition.BOTTOM, duration: const Duration(seconds: 4));
+    }
+  }
 }

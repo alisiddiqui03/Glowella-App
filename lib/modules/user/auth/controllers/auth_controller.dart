@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../app/services/auth_service.dart';
 import '../../../../app/services/discount_service.dart';
@@ -52,6 +53,26 @@ class AuthController extends GetxController {
       _postLoginNav();
     } catch (e) {
       errorMessage.value = _friendlyError(e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> resetPassword(String email) async {
+    if (email.isEmpty) {
+      Get.snackbar('Error', 'Please enter your email address',
+          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+    isLoading.value = true;
+    try {
+      await _auth.sendPasswordResetEmail(email.trim());
+      Get.back();
+      Get.snackbar('Success', 'Password reset link sent to your email.',
+          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+    } catch (e) {
+      Get.snackbar('Error', _friendlyError(e.toString()),
+          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
     } finally {
       isLoading.value = false;
     }
