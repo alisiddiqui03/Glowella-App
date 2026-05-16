@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
@@ -12,9 +13,7 @@ class CheckoutView extends GetView<CheckoutController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text('Checkout', style: AppTextStyles.titleLarge),
-      ),
+      appBar: AppBar(title: Text('Checkout', style: AppTextStyles.titleLarge)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -55,30 +54,45 @@ class CheckoutView extends GetView<CheckoutController> {
       ),
       child: Column(
         children: [
-          _field(controller.nameCtrl, 'Full Name',
-              Icons.person_outline_rounded),
-          const SizedBox(height: 12),
-          _field(controller.emailCtrl, 'Email', Icons.email_outlined,
-              type: TextInputType.emailAddress),
-          const SizedBox(height: 12),
-          _field(controller.phoneCtrl, 'Phone Number',
-              Icons.phone_outlined,
-              type: TextInputType.phone),
+          _field(
+            controller.nameCtrl,
+            'Full Name',
+            Icons.person_outline_rounded,
+          ),
           const SizedBox(height: 12),
           _field(
-              controller.streetCtrl, 'Street Address', Icons.home_outlined),
+            controller.emailCtrl,
+            'Email',
+            Icons.email_outlined,
+            type: TextInputType.emailAddress,
+          ),
+          const SizedBox(height: 12),
+          _field(
+            controller.phoneCtrl,
+            'Phone Number',
+            Icons.phone_outlined,
+            type: TextInputType.phone,
+          ),
+          const SizedBox(height: 12),
+          _field(controller.streetCtrl, 'Street Address', Icons.home_outlined),
           const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
-                child: _field(controller.cityCtrl, 'City',
-                    Icons.location_city_outlined),
+                child: _field(
+                  controller.cityCtrl,
+                  'City',
+                  Icons.location_city_outlined,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _field(controller.postalCtrl, 'Postal Code',
-                    Icons.pin_drop_outlined,
-                    type: TextInputType.number),
+                child: _field(
+                  controller.postalCtrl,
+                  'Postal Code',
+                  Icons.pin_drop_outlined,
+                  type: TextInputType.number,
+                ),
               ),
             ],
           ),
@@ -96,140 +110,153 @@ class CheckoutView extends GetView<CheckoutController> {
     return TextField(
       controller: ctrl,
       keyboardType: type,
+      style: TextStyle(
+        color: Colors.black, // input text color
+        fontSize: 16,
+      ),
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon),
+
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.shadow),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.primary),
+        ),
       ),
     );
   }
 
   Widget _buildPaymentMethod() {
-    return Obx(() => Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [BoxShadow(color: AppColors.shadow, blurRadius: 8)],
-          ),
-          child: Column(
-            children: [
-              _paymentTile(
-                title: 'Cash on Delivery (COD)',
-                subtitle: 'Pay when delivered (max PKR 10,000)',
-                icon: Icons.payments_outlined,
-                selected: controller.isCod.value,
-                onTap: () => controller.isCod.value = true,
-              ),
+    return Obx(
+      () => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: AppColors.shadow, blurRadius: 8)],
+        ),
+        child: Column(
+          children: [
+            _paymentTile(
+              title: 'Cash on Delivery (COD)',
+              subtitle: 'Pay when delivered',
+              icon: Icons.payments_outlined,
+              selected: controller.isCod.value,
+              onTap: () => controller.isCod.value = true,
+            ),
+            const Divider(height: 1, color: AppColors.divider),
+            _paymentTile(
+              title: 'Bank Transfer',
+              subtitle: 'Get extra 5% discount',
+              icon: Icons.account_balance_outlined,
+              selected: !controller.isCod.value,
+              onTap: () => controller.isCod.value = false,
+            ),
+            if (!controller.isCod.value) ...[
               const Divider(height: 1, color: AppColors.divider),
-              _paymentTile(
-                title: 'Bank Transfer',
-                subtitle: 'Get extra 5% discount',
-                icon: Icons.account_balance_outlined,
-                selected: !controller.isCod.value,
-                onTap: () => controller.isCod.value = false,
-              ),
-              if (!controller.isCod.value) ...[
-                const Divider(height: 1, color: AppColors.divider),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color:
-                              AppColors.primary.withValues(alpha: 0.07),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                              color: AppColors.primary
-                                  .withValues(alpha: 0.2)),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Bank Details',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            _bankDetail(
-                                'Bank', 'HBL / Meezan Bank'),
-                            _bankDetail('Account Name',
-                                'Glowella by MD Scents'),
-                            _bankDetail(
-                                'Account No', '0123-456789-0123'),
-                            _bankDetail('IBAN',
-                                'PK00XXXX0000000000000000'),
-                          ],
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.07),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: AppColors.primary.withValues(alpha: 0.2),
                         ),
                       ),
-                      const SizedBox(height: 14),
-                      Text('Upload Payment Receipt',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 8),
-                      Obx(() => GestureDetector(
-                            onTap: controller.pickReceipt,
-                            child: Container(
-                              height: 80,
-                              decoration: BoxDecoration(
-                                color: AppColors.background,
-                                borderRadius:
-                                    BorderRadius.circular(12),
-                                border: Border.all(
-                                    color: AppColors.divider,
-                                    width: 1.5),
-                              ),
-                              alignment: Alignment.center,
-                              child:
-                                  controller.receiptFile.value != null
-                                      ? Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const Icon(
-                                                Icons.check_circle,
-                                                color:
-                                                    AppColors.primary),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              'Receipt uploaded ✓',
-                                              style: AppTextStyles
-                                                  .bodySmall
-                                                  .copyWith(
-                                                color: AppColors.primary,
-                                                fontWeight:
-                                                    FontWeight.w600,
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      : Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const Icon(
-                                                Icons.upload_file_rounded,
-                                                color: AppColors.textMuted,
-                                                size: 28),
-                                            const SizedBox(height: 4),
-                                            Text('Tap to upload',
-                                                style:
-                                                    AppTextStyles.bodySmall),
-                                          ],
-                                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Bank Details',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primary,
                             ),
-                          )),
-                    ],
-                  ),
+                          ),
+                          const SizedBox(height: 8),
+                          _bankDetail('Bank', 'Meezan Bank'),
+                          _bankDetail('Account Name', 'M Umair Siddiqui'),
+                          _bankDetail('Account No', '99520105774580', isCopyable: true),
+                          _bankDetail('IBAN', 'PK56MEZN0099520105774580', isCopyable: true),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Text(
+                      'Upload Payment Receipt',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Obx(
+                      () => GestureDetector(
+                        onTap: controller.pickReceipt,
+                        child: Container(
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: AppColors.background,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: AppColors.divider,
+                              width: 1.5,
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child:
+                              controller.receiptFile.value != null
+                                  ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.check_circle,
+                                        color: AppColors.primary,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'Receipt uploaded ✓',
+                                        style: AppTextStyles.bodySmall.copyWith(
+                                          color: AppColors.primary,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                  : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.upload_file_rounded,
+                                        color: AppColors.textMuted,
+                                        size: 28,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Tap to upload',
+                                        style: AppTextStyles.bodySmall,
+                                      ),
+                                    ],
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ],
-          ),
-        ));
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _paymentTile({
@@ -249,27 +276,30 @@ class CheckoutView extends GetView<CheckoutController> {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: selected
-                    ? AppColors.primary.withValues(alpha: 0.1)
-                    : AppColors.background,
+                color:
+                    selected
+                        ? AppColors.primary.withValues(alpha: 0.1)
+                        : AppColors.background,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon,
-                  color: selected
-                      ? AppColors.primary
-                      : AppColors.textMuted,
-                  size: 22),
+              child: Icon(
+                icon,
+                color: selected ? AppColors.primary : AppColors.textMuted,
+                size: 22,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      )),
+                  Text(
+                    title,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
                   Text(subtitle, style: AppTextStyles.bodySmall),
                 ],
               ),
@@ -286,21 +316,47 @@ class CheckoutView extends GetView<CheckoutController> {
     );
   }
 
-  Widget _bankDetail(String label, String value) {
+  Widget _bankDetail(String label, String value, {bool isCopyable = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: [
-          Text('$label: ',
-              style: AppTextStyles.bodySmall
-                  .copyWith(color: AppColors.textSecondary)),
-          Flexible(
-            child: Text(value,
-                style: AppTextStyles.bodySmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                )),
+          Text(
+            '$label: ',
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.textSecondary,
+            ),
           ),
+          Flexible(
+            child: Text(
+              value,
+              style: AppTextStyles.bodySmall.copyWith(
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+          if (isCopyable) ...[
+            const SizedBox(width: 8),
+            GestureDetector(
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: value));
+                Get.snackbar(
+                  'Copied',
+                  '$label copied to clipboard',
+                  snackPosition: SnackPosition.TOP,
+                  backgroundColor: AppColors.primary,
+                  colorText: Colors.white,
+                  duration: const Duration(seconds: 2),
+                );
+              },
+              child: const Icon(
+                Icons.copy_rounded,
+                size: 16,
+                color: AppColors.primary,
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -315,26 +371,31 @@ class CheckoutView extends GetView<CheckoutController> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(color: AppColors.shadow, blurRadius: 8)
-          ],
+          boxShadow: [BoxShadow(color: AppColors.shadow, blurRadius: 8)],
         ),
         child: Row(
           children: [
-            const Icon(Icons.account_balance_wallet_outlined,
-                color: AppColors.primary),
+            const Icon(
+              Icons.account_balance_wallet_outlined,
+              color: AppColors.primary,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Use Wallet Balance',
-                      style: AppTextStyles.bodyMedium
-                          .copyWith(fontWeight: FontWeight.w600)),
                   Text(
-                      'Available: PKR ${balance.toStringAsFixed(0)}',
-                      style: AppTextStyles.bodySmall
-                          .copyWith(color: AppColors.primary)),
+                    'Use Wallet Balance',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    'Available: PKR ${balance.toStringAsFixed(0)}',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.primary,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -350,73 +411,76 @@ class CheckoutView extends GetView<CheckoutController> {
   }
 
   Widget _buildOrderSummary() {
-    return Obx(() => Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(color: AppColors.shadow, blurRadius: 8)
-            ],
-          ),
-          child: Column(
-            children: [
-              _summaryRow('Subtotal',
-                  'PKR ${controller.subtotal.toStringAsFixed(0)}'),
+    return Obx(
+      () => Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: AppColors.shadow, blurRadius: 8)],
+        ),
+        child: Column(
+          children: [
+            _summaryRow(
+              'Subtotal',
+              'PKR ${controller.subtotal.toStringAsFixed(0)}',
+            ),
+            _summaryRow(
+              'Discount (${controller.discountPct.toStringAsFixed(0)}%)',
+              '- PKR ${controller.discountAmt.toStringAsFixed(0)}',
+              color: AppColors.primary,
+            ),
+            if (!controller.isCod.value)
               _summaryRow(
-                'Discount (${controller.discountPct.toStringAsFixed(0)}%)',
-                '- PKR ${controller.discountAmt.toStringAsFixed(0)}',
+                'Bank Transfer Bonus (-5%)',
+                '- PKR ${controller.bankBonus.toStringAsFixed(0)}',
                 color: AppColors.primary,
               ),
-              if (!controller.isCod.value)
-                _summaryRow(
-                  'Bank Transfer Bonus (-5%)',
-                  '- PKR ${controller.bankBonus.toStringAsFixed(0)}',
-                  color: AppColors.primary,
-                ),
-              if (controller.isCod.value)
-                _summaryRow(
-                  'Delivery Charges',
-                  '+ PKR ${controller.deliveryCharges.toStringAsFixed(0)}',
-                ),
-              if (controller.useWallet.value &&
-                  controller.walletDeduction > 0)
-                _summaryRow(
-                  'Wallet Applied',
-                  '- PKR ${controller.walletDeduction.toStringAsFixed(0)}',
-                  color: AppColors.primary,
-                ),
-              const Divider(color: AppColors.divider),
+            if (controller.isCod.value)
               _summaryRow(
-                'Total',
-                'PKR ${controller.finalTotal.toStringAsFixed(0)}',
-                bold: true,
+                'Delivery Charges',
+                '+ PKR ${controller.deliveryCharges.toStringAsFixed(0)}',
               ),
-            ],
-          ),
-        ));
+            if (controller.useWallet.value && controller.walletDeduction > 0)
+              _summaryRow(
+                'Wallet Applied',
+                '- PKR ${controller.walletDeduction.toStringAsFixed(0)}',
+                color: AppColors.primary,
+              ),
+            const Divider(color: AppColors.divider),
+            _summaryRow(
+              'Total',
+              'PKR ${controller.finalTotal.toStringAsFixed(0)}',
+              bold: true,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  Widget _summaryRow(String label, String value,
-      {Color? color, bool bold = false}) {
+  Widget _summaryRow(
+    String label,
+    String value, {
+    Color? color,
+    bool bold = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: bold
-                  ? AppTextStyles.titleMedium
-                  : AppTextStyles.bodyMedium),
+          Text(
+            label,
+            style: bold ? AppTextStyles.titleMedium : AppTextStyles.bodyMedium,
+          ),
           Text(
             value,
-            style: (bold
-                    ? AppTextStyles.titleMedium
-                    : AppTextStyles.bodyMedium)
+            style: (bold ? AppTextStyles.titleMedium : AppTextStyles.bodyMedium)
                 .copyWith(
-              color: color ?? AppColors.textPrimary,
-              fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
-            ),
+                  color: color ?? AppColors.textPrimary,
+                  fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
+                ),
           ),
         ],
       ),
@@ -424,24 +488,28 @@ class CheckoutView extends GetView<CheckoutController> {
   }
 
   Widget _buildPlaceOrderBtn() {
-    return Obx(() => SizedBox(
-          width: double.infinity,
-          height: 52,
-          child: ElevatedButton(
-            onPressed:
-                controller.isLoading.value ? null : controller.placeOrder,
-            child: controller.isLoading.value
-                ? const SizedBox(
+    return Obx(
+      () => SizedBox(
+        width: double.infinity,
+        height: 52,
+        child: ElevatedButton(
+          onPressed: controller.isLoading.value ? null : controller.placeOrder,
+          child:
+              controller.isLoading.value
+                  ? const SizedBox(
                     width: 22,
                     height: 22,
                     child: CircularProgressIndicator(
-                        color: Colors.white, strokeWidth: 2),
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
                   )
-                : Text(
+                  : Text(
                     'Place Order — PKR ${controller.finalTotal.toStringAsFixed(0)}',
                     style: AppTextStyles.buttonText,
                   ),
-          ),
-        ));
+        ),
+      ),
+    );
   }
 }

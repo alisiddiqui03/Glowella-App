@@ -22,5 +22,5 @@ class FirestoreService {
 
   // Admin: collection group query across all users' orders
   static Query<Map<String, dynamic>> get ordersCollectionGroup =>
-      instance.collectionGroup('orders').where('app', isEqualTo: 'glowvella');
+      instance.collectionGroup('orders');
 }

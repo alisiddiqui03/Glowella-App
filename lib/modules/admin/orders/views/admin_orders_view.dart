@@ -224,6 +224,35 @@ class _AdminOrderCard extends GetView<AdminOrdersController> {
                       order.isCod ? 'COD' : 'Bank Transfer',
                       order.isCod ? Colors.orange : Colors.blue,
                     ),
+                    if (!order.isCod && order.paymentReceiptUrl != null) ...[
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () => _viewReceipt(order.paymentReceiptUrl!),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.image_outlined, size: 12, color: AppColors.primary),
+                              const SizedBox(width: 4),
+                              Text(
+                                'VIEW RECEIPT',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(width: 6),
                     _badge(
                       order.isPaid ? 'PAID ✓' : 'UNPAID',
@@ -361,5 +390,40 @@ class _AdminOrderCard extends GetView<AdminOrdersController> {
         ),
       ],
     ));
+  }
+
+  void _viewReceipt(String url) {
+    Get.to(
+      () => Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          iconTheme: const IconThemeData(color: Colors.white),
+          title: const Text('Payment Receipt', style: TextStyle(color: Colors.white)),
+        ),
+        body: Center(
+          child: InteractiveViewer(
+            minScale: 0.5,
+            maxScale: 4.0,
+            child: Image.network(
+              url,
+              fit: BoxFit.contain,
+              width: double.infinity,
+              height: double.infinity,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return const Center(child: CircularProgressIndicator(color: Colors.white));
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return const Center(
+                  child: Text('Could not load image', style: TextStyle(color: Colors.white)),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+      transition: Transition.fade,
+    );
   }
 }

@@ -41,6 +41,7 @@ class OrderService extends GetxService {
     }
     isOrdersLoading.value = true;
     _adminSub = FirestoreService.ordersCollectionGroup
+        .where('app', isEqualTo: 'glowvella')
         .orderBy('createdAt', descending: true)
         .snapshots()
         .listen(
@@ -158,7 +159,9 @@ class OrderService extends GetxService {
   }
 
   // Dashboard aggregates
-  double get totalRevenue => orders.fold(0, (s, o) => s + o.total);
+  double get totalRevenue => orders
+      .where((o) => o.status != OrderStatus.cancelled)
+      .fold(0, (s, o) => s + o.total);
   int get pendingCount =>
       orders.where((o) => o.status == OrderStatus.pending).length;
   int get deliveredCount =>

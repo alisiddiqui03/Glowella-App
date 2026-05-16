@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../app/data/models/glow_product.dart';
-import '../../../../app/services/product_service.dart';
 
 class CartItem {
   final GlowProduct product;
@@ -27,11 +27,35 @@ class CartController extends GetxController {
     } else {
       items.add(CartItem(product: product));
     }
+
+    Get.closeAllSnackbars();
     Get.snackbar(
-      'Added to Cart',
-      '${product.name} added',
-      snackPosition: SnackPosition.BOTTOM,
+      'Added to Cart 🛒',
+      '${product.name} has been added to your cart.',
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.white,
+      colorText: const Color(0xFF1E293B),
+      borderRadius: 16,
+      margin: const EdgeInsets.all(16),
+      boxShadows: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.1),
+          blurRadius: 20,
+          offset: const Offset(0, 10),
+        ),
+      ],
+      icon: Container(
+        margin: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: const Color(0xFF16A34A).withValues(alpha: 0.1),
+          shape: BoxShape.circle,
+        ),
+        child: const Icon(Icons.check_rounded, color: Color(0xFF16A34A)),
+      ),
       duration: const Duration(seconds: 2),
+      isDismissible: true,
+      forwardAnimationCurve: Curves.easeOutCirc,
     );
   }
 

@@ -4,6 +4,6 @@ import '../controllers/cart_controller.dart';
 class CartBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<CartController>(() => CartController(), fenix: true);
+    Get.put<CartController>(CartController(), permanent: true);
   }
 }

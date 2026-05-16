@@ -15,28 +15,45 @@ class CartView extends GetView<CartController> {
       appBar: AppBar(
         title: Text('My Cart', style: AppTextStyles.titleLarge),
         actions: [
-          Obx(() => controller.items.isNotEmpty
-              ? TextButton(
-                  onPressed: () => Get.dialog(AlertDialog(
-                    title: const Text('Clear Cart'),
-                    content: const Text('Remove all items?'),
-                    actions: [
-                      TextButton(
-                          onPressed: Get.back, child: const Text('Cancel')),
-                      TextButton(
-                          onPressed: () {
-                            controller.clear();
-                            Get.back();
-                          },
-                          child: const Text('Clear',
-                              style: TextStyle(color: AppColors.danger))),
-                    ],
-                  )),
-                  child: Text('Clear',
-                      style: AppTextStyles.bodySmall
-                          .copyWith(color: AppColors.danger)),
-                )
-              : const SizedBox()),
+          Obx(
+            () =>
+                controller.items.isNotEmpty
+                    ? TextButton(
+                      onPressed:
+                          () => Get.dialog(
+                            AlertDialog(
+                              title: const Text('Clear Cart'),
+                              content: Text(
+                                'Remove all items?',
+                                style: TextStyle(color: AppColors.danger),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: Get.back,
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    controller.clear();
+                                    Get.back();
+                                  },
+                                  child: const Text(
+                                    'Clear',
+                                    style: TextStyle(color: AppColors.danger),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      child: Text(
+                        'Clear',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.danger,
+                        ),
+                      ),
+                    )
+                    : const SizedBox(),
+          ),
         ],
       ),
       body: Obx(() {
@@ -52,14 +69,19 @@ class CartView extends GetView<CartController> {
                     color: AppColors.primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.shopping_bag_outlined,
-                      size: 48, color: AppColors.primary),
+                  child: const Icon(
+                    Icons.shopping_bag_outlined,
+                    size: 48,
+                    color: AppColors.primary,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text('Your cart is empty', style: AppTextStyles.titleMedium),
                 const SizedBox(height: 8),
-                Text('Add products to get started',
-                    style: AppTextStyles.bodyMedium),
+                Text(
+                  'Add products to get started',
+                  style: AppTextStyles.bodyMedium,
+                ),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () => Get.offAllNamed(Routes.USER_BASE),
@@ -101,8 +123,10 @@ class CartView extends GetView<CartController> {
                             color: AppColors.shimmer,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(Icons.spa_rounded,
-                              color: AppColors.primaryLight),
+                          child: const Icon(
+                            Icons.spa_rounded,
+                            color: AppColors.primaryLight,
+                          ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -121,7 +145,8 @@ class CartView extends GetView<CartController> {
                               Text(
                                 'PKR ${item.product.price.toStringAsFixed(0)}',
                                 style: AppTextStyles.price.copyWith(
-                                    fontSize: 14),
+                                  fontSize: 14,
+                                ),
                               ),
                             ],
                           ),
@@ -132,37 +157,44 @@ class CartView extends GetView<CartController> {
                               children: [
                                 _qtyBtn(
                                   icon: Icons.remove,
-                                  onTap: () =>
-                                      controller.decrement(item.product.id),
+                                  onTap:
+                                      () =>
+                                          controller.decrement(item.product.id),
                                 ),
                                 Obx(() {
-                                  final idx = controller.items
-                                      .indexWhere(
-                                          (it) =>
-                                              it.product.id == item.product.id);
-                                  final qty = idx >= 0
-                                      ? controller.items[idx].quantity
-                                      : 0;
+                                  final idx = controller.items.indexWhere(
+                                    (it) => it.product.id == item.product.id,
+                                  );
+                                  final qty =
+                                      idx >= 0
+                                          ? controller.items[idx].quantity
+                                          : 0;
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    child: Text('$qty',
-                                        style: AppTextStyles.titleMedium),
+                                      horizontal: 10,
+                                    ),
+                                    child: Text(
+                                      '$qty',
+                                      style: AppTextStyles.titleMedium,
+                                    ),
                                   );
                                 }),
                                 _qtyBtn(
                                   icon: Icons.add,
-                                  onTap: () =>
-                                      controller.increment(item.product.id),
+                                  onTap:
+                                      () =>
+                                          controller.increment(item.product.id),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 6),
                             GestureDetector(
-                              onTap: () =>
-                                  controller.remove(item.product.id),
-                              child: const Icon(Icons.delete_outline,
-                                  color: AppColors.danger, size: 20),
+                              onTap: () => controller.remove(item.product.id),
+                              child: const Icon(
+                                Icons.delete_outline,
+                                color: AppColors.danger,
+                                size: 20,
+                              ),
                             ),
                           ],
                         ),
@@ -206,8 +238,7 @@ class CartView extends GetView<CartController> {
             offset: const Offset(0, -4),
           ),
         ],
-        borderRadius:
-            const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         children: [
@@ -215,12 +246,14 @@ class CartView extends GetView<CartController> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Total', style: AppTextStyles.titleMedium),
-              Obx(() => Text(
-                    'PKR ${controller.subtotal.toStringAsFixed(0)}',
-                    style: AppTextStyles.headlineMedium.copyWith(
-                      color: AppColors.primary,
-                    ),
-                  )),
+              Obx(
+                () => Text(
+                  'PKR ${controller.subtotal.toStringAsFixed(0)}',
+                  style: AppTextStyles.headlineMedium.copyWith(
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -229,8 +262,10 @@ class CartView extends GetView<CartController> {
             height: 52,
             child: ElevatedButton(
               onPressed: () => Get.toNamed(Routes.CHECKOUT),
-              child: Text('Proceed to Checkout',
-                  style: AppTextStyles.buttonText),
+              child: Text(
+                'Proceed to Checkout',
+                style: AppTextStyles.buttonText,
+              ),
             ),
           ),
         ],

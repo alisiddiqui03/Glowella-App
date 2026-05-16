@@ -21,7 +21,11 @@ Future<void> main() async {
   await dotenv.load();
   await GetStorage.init();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  try {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  } catch (e) {
+    debugPrint("Firebase already initialized: $e");
+  }
 
   await AdService.instance.init();
 

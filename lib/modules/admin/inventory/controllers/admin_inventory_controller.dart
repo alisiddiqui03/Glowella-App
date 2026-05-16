@@ -20,7 +20,13 @@ class AdminInventoryController extends GetxController {
   Future<void> loadProducts() async {
     isLoading.value = true;
     try {
-      products.assignAll(await _productService.fetchAllAdmin());
+      final fetched = await _productService.fetchAllAdmin();
+      if (fetched.isEmpty) {
+        await _productService.seedProductsIfNeeded();
+        products.assignAll(await _productService.fetchAllAdmin());
+      } else {
+        products.assignAll(fetched);
+      }
     } finally {
       isLoading.value = false;
     }

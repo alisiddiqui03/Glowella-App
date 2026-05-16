@@ -26,7 +26,7 @@ class AdminDashboardController extends GetxController {
       map[key] = 0;
     }
     for (final o in orders) {
-      if (o.status == OrderStatus.delivered) {
+      if (o.status != OrderStatus.cancelled) {
         final d = o.createdAt;
         final diff = now.difference(d).inDays;
         if (diff <= 6) {

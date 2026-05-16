@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/data/models/glow_product.dart';
+import '../../../../app/routes/app_pages.dart';
 import '../../cart/controllers/cart_controller.dart';
 import '../controllers/product_detail_controller.dart';
 
@@ -46,6 +47,52 @@ class ProductDetailView extends GetView<ProductDetailController> {
           ),
         ),
       ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            child: IconButton(
+              icon: Obx(() {
+                final count = Get.find<CartController>().totalItems;
+                return Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    const Icon(Icons.shopping_bag_outlined,
+                        color: AppColors.textPrimary, size: 20),
+                    if (count > 0)
+                      Positioned(
+                        right: -4,
+                        top: -4,
+                        child: Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: const BoxDecoration(
+                            color: AppColors.danger,
+                            shape: BoxShape.circle,
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 14,
+                            minHeight: 14,
+                          ),
+                          child: Text(
+                            count > 9 ? '9+' : '$count',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 8,
+                              fontWeight: FontWeight.w800,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              }),
+              onPressed: () => Get.toNamed(Routes.CART),
+            ),
+          ),
+        ),
+      ],
       flexibleSpace: FlexibleSpaceBar(
         background: Stack(
           children: [
@@ -224,16 +271,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
             child: SizedBox(
               height: 52,
               child: ElevatedButton(
-                onPressed: () {
-                  Get.find<CartController>().addToCart(product);
-                  Get.snackbar(
-                    'Added to Cart',
-                    '${product.name} added successfully',
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: AppColors.primary,
-                    colorText: Colors.white,
-                  );
-                },
+                onPressed: () => Get.find<CartController>().addToCart(product),
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),

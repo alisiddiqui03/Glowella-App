@@ -41,10 +41,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDQ-9aKRfMA45SYpTTG_QRaopzJJYcWFdc',
-    appId: '1:206439401804:android:994cf4979181f88c70a7e9',
+    appId: '1:206439401804:android:daf14b528f708f6070a7e9',
     messagingSenderId: '206439401804',
     projectId: 'md-scents-perfumes',
-    storageBucket: 'md-scents-perfumes.firebasestorage.app',
+    storageBucket: 'md-scents-perfumes.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

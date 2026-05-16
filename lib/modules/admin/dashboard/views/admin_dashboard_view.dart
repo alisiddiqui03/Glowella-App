@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/data/models/glow_order.dart';
-import '../../../../app/services/auth_service.dart';
-import '../../../../app/routes/app_pages.dart';
 import '../controllers/admin_dashboard_controller.dart';
 
 class AdminDashboardView extends GetView<AdminDashboardController> {
@@ -20,23 +19,15 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('GLOWELLA Admin', style: AppTextStyles.titleLarge),
-            Text('Dashboard', style: AppTextStyles.bodySmall),
+            Text('Dashboard Overview', style: AppTextStyles.bodySmall),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout_rounded),
-            onPressed: () async {
-              await AuthService.to.signOut();
-              Get.offAllNamed(Routes.AUTH);
-            },
-          ),
-        ],
       ),
       body: Obx(() {
         if (controller.isLoading) {
           return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary));
+            child: CircularProgressIndicator(color: AppColors.primary),
+          );
         }
         return RefreshIndicator(
           color: AppColors.primary,
@@ -59,7 +50,8 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                   children: [
                     _StatCard(
                       label: 'Total Revenue',
-                      value: 'PKR ${controller.totalRevenue.toStringAsFixed(0)}',
+                      value:
+                          'PKR ${controller.totalRevenue.toStringAsFixed(0)}',
                       icon: Icons.monetization_on_rounded,
                       color: AppColors.routineMaster,
                       iconColor: AppColors.primary,
@@ -94,12 +86,17 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                 const SizedBox(height: 24),
                 Text('Recent Orders', style: AppTextStyles.titleMedium),
                 const SizedBox(height: 12),
-                ...controller.orders.take(5).map((o) => _RecentOrderTile(order: o)),
+                ...controller.orders
+                    .take(5)
+                    .map((o) => _RecentOrderTile(order: o)),
                 if (controller.orders.isEmpty)
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.all(24),
-                      child: Text('No orders yet', style: AppTextStyles.bodyMedium),
+                      child: Text(
+                        'No orders yet',
+                        style: AppTextStyles.bodyMedium,
+                      ),
                     ),
                   ),
               ],
@@ -113,47 +110,70 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
   Widget _buildRevenueChart() {
     final data = controller.dailyRevenue;
     if (data.isEmpty) return const SizedBox();
-    final max = data.values.fold<double>(0, (m, v) => v > m ? v : m);
+
+    final entries = data.entries.toList();
+    entries.fold<double>(0, (m, e) => e.value > m ? e.value : m);
+    final spots = List.generate(entries.length, (i) {
+      return FlSpot(i.toDouble(), entries[i].value);
+    });
 
     return Container(
-      height: 160,
-      padding: const EdgeInsets.all(16),
+      height: 220,
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: AppColors.shadow, blurRadius: 8)],
+        boxShadow: [BoxShadow(color: AppColors.shadow, blurRadius: 10)],
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: data.entries.map((e) {
-          final pct = max > 0 ? (e.value / max) : 0.0;
-          return Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 3),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 600),
-                    height: (100 * pct).toDouble().clamp(4, 100),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppColors.primary, AppColors.primaryLight],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
+      child: LineChart(
+        LineChartData(
+          gridData: const FlGridData(show: false),
+          titlesData: FlTitlesData(
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            leftTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (val, meta) {
+                  int i = val.toInt();
+                  if (i >= 0 && i < entries.length) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        entries[i].key,
+                        style: AppTextStyles.caption.copyWith(fontSize: 8),
                       ),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(e.key,
-                      style: AppTextStyles.caption.copyWith(fontSize: 9),
-                      overflow: TextOverflow.ellipsis),
-                ],
+                    );
+                  }
+                  return const SizedBox();
+                },
+                reservedSize: 22,
               ),
             ),
-          );
-        }).toList(),
+          ),
+          borderData: FlBorderData(show: false),
+          lineBarsData: [
+            LineChartBarData(
+              spots: spots,
+              isCurved: true,
+              color: AppColors.primary,
+              barWidth: 3,
+              isStrokeCapRound: true,
+              dotData: const FlDotData(show: true),
+              belowBarData: BarAreaData(
+                show: true,
+                color: AppColors.primary.withValues(alpha: 0.1),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -190,10 +210,13 @@ class _StatCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(value,
-                  style: AppTextStyles.titleLarge
-                      .copyWith(fontWeight: FontWeight.w800),
-                  overflow: TextOverflow.ellipsis),
+              Text(
+                value,
+                style: AppTextStyles.titleLarge.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
               Text(label, style: AppTextStyles.bodySmall),
             ],
           ),
@@ -224,7 +247,9 @@ class _RecentOrderTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  order.customerName.isNotEmpty ? order.customerName : 'Customer',
+                  order.customerName.isNotEmpty
+                      ? order.customerName
+                      : 'Customer',
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
@@ -240,8 +265,10 @@ class _RecentOrderTile extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('PKR ${order.total.toStringAsFixed(0)}',
-                  style: AppTextStyles.price.copyWith(fontSize: 13)),
+              Text(
+                'PKR ${order.total.toStringAsFixed(0)}',
+                style: AppTextStyles.price.copyWith(fontSize: 13),
+              ),
               _StatusChip(order.status),
             ],
           ),
@@ -257,11 +284,16 @@ class _StatusChip extends StatelessWidget {
 
   Color get color {
     switch (status) {
-      case OrderStatus.pending:   return Colors.orange;
-      case OrderStatus.packed:    return Colors.blue;
-      case OrderStatus.shipped:   return Colors.purple;
-      case OrderStatus.delivered: return AppColors.primary;
-      case OrderStatus.cancelled: return AppColors.danger;
+      case OrderStatus.pending:
+        return Colors.orange;
+      case OrderStatus.packed:
+        return Colors.blue;
+      case OrderStatus.shipped:
+        return Colors.purple;
+      case OrderStatus.delivered:
+        return AppColors.primary;
+      case OrderStatus.cancelled:
+        return AppColors.danger;
     }
   }
 

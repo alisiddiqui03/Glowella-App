@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../../../app/data/models/glow_order.dart';
 import '../../../../app/services/auth_service.dart';
@@ -123,10 +125,30 @@ class CheckoutController extends GetxController {
       String? uploadedUrl;
 
       if (!isCod.value && receiptFile.value != null) {
-        final ref = FirebaseStorage.instance.ref(
-            'orders/receipts/${DateTime.now().millisecondsSinceEpoch}.jpg');
-        await ref.putFile(receiptFile.value!);
-        uploadedUrl = await ref.getDownloadURL();
+        try {
+          final cloudName = dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? 'dpovp433m';
+          final uploadPreset = dotenv.env['CLOUDINARY_UPLOAD_PRESET'] ?? 'mdscents_products';
+          
+          final url = Uri.parse('https://api.cloudinary.com/v1_1/$cloudName/image/upload');
+          
+          final request = http.MultipartRequest('POST', url)
+            ..fields['upload_preset'] = uploadPreset
+            ..files.add(await http.MultipartFile.fromPath('file', receiptFile.value!.path));
+
+          final response = await request.send();
+          if (response.statusCode == 200) {
+            final responseData = await response.stream.bytesToString();
+            final json = jsonDecode(responseData);
+            uploadedUrl = json['secure_url'];
+          } else {
+            throw Exception('Cloudinary upload failed with status: ${response.statusCode}');
+          }
+        } catch (storageError) {
+          debugPrint('Cloudinary Error: $storageError');
+          Get.snackbar('Upload Error', 'Could not upload payment receipt. Please check your internet.');
+          isLoading.value = false;
+          return;
+        }
       }
 
       if (walletDeduction > 0) {

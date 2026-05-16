@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/routes/app_pages.dart';
@@ -126,7 +125,6 @@ class HomeView extends GetView<HomeController> {
       ),
     );
   }
-
 
   Widget _iconBtn({
     required IconData icon,
@@ -275,32 +273,45 @@ class _ProductCard extends StatelessWidget {
             // Image Area
             Expanded(
               child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
                 child: Stack(
                   children: [
                     SizedBox.expand(
-                      child: product.imageUrls.isNotEmpty
-                          ? Image.asset(
-                              product.imageUrls[0],
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Container(
+                      child:
+                          product.imageUrls.isNotEmpty
+                              ? Image.asset(
+                                product.imageUrls[0],
+                                fit: BoxFit.cover,
+                                errorBuilder:
+                                    (_, __, ___) => Container(
+                                      color: AppColors.shimmer,
+                                      child: const Icon(
+                                        Icons.spa_rounded,
+                                        color: AppColors.primaryLight,
+                                        size: 40,
+                                      ),
+                                    ),
+                              )
+                              : Container(
                                 color: AppColors.shimmer,
-                                child: const Icon(Icons.spa_rounded,
-                                    color: AppColors.primaryLight, size: 40),
+                                child: const Icon(
+                                  Icons.spa_rounded,
+                                  color: AppColors.primaryLight,
+                                  size: 40,
+                                ),
                               ),
-                            )
-                          : Container(
-                              color: AppColors.shimmer,
-                              child: const Icon(Icons.spa_rounded,
-                                  color: AppColors.primaryLight, size: 40),
-                            ),
                     ),
                     if (product.stock <= 0)
                       Positioned(
                         top: 10,
                         right: 10,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.danger.withValues(alpha: 0.9),
                             borderRadius: BorderRadius.circular(10),
@@ -308,9 +319,10 @@ class _ProductCard extends StatelessWidget {
                           child: const Text(
                             'Sold Out',
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold),
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -351,37 +363,42 @@ class _ProductCard extends StatelessWidget {
                   const SizedBox(height: 12),
                   // Add to Cart Button
                   SizedBox(
-                    height: 36,
+                    height: 40,
+                    width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: product.stock > 0
-                          ? () {
-                              Get.find<CartController>().addToCart(product);
-                              Get.snackbar(
-                                'Added to Cart',
-                                '${product.name} added successfully',
-                                snackPosition: SnackPosition.BOTTOM,
-                                backgroundColor: AppColors.primary,
-                                colorText: Colors.white,
-                                duration: const Duration(seconds: 2),
-                                margin: const EdgeInsets.all(12),
-                              );
-                            }
-                          : null,
+                      onPressed:
+                          product.stock > 0
+                              ? () =>
+                                  Get.find<CartController>().addToCart(product)
+                              : null,
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.zero,
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
-                        elevation: 0,
+                        elevation: 4,
+                        shadowColor: AppColors.primary.withValues(alpha: 0.3),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: Text(
-                        'Add to Cart',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.shopping_bag_outlined,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Add to Cart',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
